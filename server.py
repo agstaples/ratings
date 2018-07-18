@@ -44,22 +44,51 @@ def user_list():
     users = User.query.all()
     return render_template("user_list.html", users=users)
 
-@app.route('/user-info')
-def user_info_page():
+@app.route('/users/<user_id>')
+def user_info_page(user_id):
     """connect user to desired user info page"""
- 
-    user_id = request.args.get("user_id")
-    user = User.query.filter(User.user_id == user_id).one()
-    user_ratings = Rating.query.filter(Rating.user_id == user_id).all()
-    movie_title, movie_rating = SELECT Movie.title, Rating.score FROM Movie JOIN Rating ON (Movie.movie_id = Rating.movie_id) WHERE (Rating.user_id = user_id)
 
-    # for user in users:
-    #     user_age = user.age
-    #     user_zipcode = user.zipcode
+    user_data = (db.session.query(User.user_id, 
+                                 User.age, 
+                                 User.zipcode, 
+                                 Movie.title, 
+                                 Rating.score).join(Rating).join(Movie).filter(User.user_id == user_id)).all()
 
+    return render_template("user_info.html", user_data=user_data)
 
 
-    # user_movie_ratings =
+@app.route('/movies')
+def show_movies():
+    """Lists all movies in database"""
+
+    movies = db.session.query(Movie.title, Movie.movie_id).order_by(Movie.title)
+
+    return render_template("movie_list.html", movies=movies)
+
+
+@app.route('/movies/<movie_id>')
+def show_movie_detail(movie_id):
+    """Shows information about a specific movie"""
+
+    movies = (db.session.query(Movie.movie_id,
+                               Movie.title,
+                               Movie.released_at,
+                               Movie.imdb_url,
+                               Rating.score).join(Rating).filter(Movie.movie_id == movie_id)).all()
+
+    return render_template("movie_detail.html", movies=movies)
+
+
+@app.route('/movies/<movie_id>', methods=["POST"])
+def show_movie_detail(movie_id):
+    """Shows information about a specific movie"""
+
+    rating = request.form.get("rating")
+
+    score = Rating.query.filter()
+
+
+
 
 
 @app.route('/login')
@@ -77,14 +106,15 @@ def login_user():
     password = request.form.get("password")
 
     user = User.query.filter(User.email == email).first()
+    user_id = user.user_id
 
     if user:
-        session["user_id"] = user.user_id
+        session["user_id"] = user_id
         flash("Welcome back. You're logged in.")
-        return redirect("/")
+        return redirect('/users/user_id')
     else:
         flash("This email address is not recognized, please log in or register.")
-        return redirect("/login")
+        return redirect('/login')
 
 
 @app.route('/register')

@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block content %}
+
+  <h2>Users</h2>
+  <hr>
+
+<body>
+  Some information about this user:<br>
+  Age: {{ user_data[0][1] }}
+  Zipcode: {{ user_data[0][2] }}<br><br>
+  Movie Ratings:
+  <ul>
+    {% for data in user_data %}
+      <li>
+          {{ data[3] }} ({{ data[4] }})
+        </a>
+      </li>
+    {% endfor %}
+  </ul>
+
+{% endblock %}
+</body>

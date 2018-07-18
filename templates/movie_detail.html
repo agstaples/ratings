@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% block content %}
+
+  <h2>Movie Detail</h2>
+  <hr>
+
+<body>
+  Some information about this movie:<br>
+  Title: {{ movies[0][1] }}<br>
+  Date Released: {{ movies[0][2] }}<br>
+  IMDB URL: {{ movies[0][3] }}<br>
+  <form action="/movies/{{ movies[0][0] }}", method="POST">
+    Enter or update your score for this movie:
+      <select name="rating">
+        <option value=1>1</option>
+        <option value=2>2</option>
+        <option value=3>3</option>
+        <option value=4>4</option>
+        <option value=5>5</option>
+      </select>
+    <input type="submit">
+  </form>
+
+  Current Ratings:
+  <ul>
+    {% for movie in movies %}
+      <li>
+        {{ movie[4] }}
+      </li>
+    {% endfor %}
+  </ul>
+
+{% endblock %}
+</body>
